@@ -1,0 +1,135 @@
+2025-04-26 18:46:49.686012 [erro]: MySQL Error
+2025-04-26 18:46:53.855874 [erro]: MySQL Error
+2025-04-26 18:49:03.349565 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 18:51:16.231175 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 18:51:19.806613 [erro]: MySQL Error
+2025-04-26 18:55:16.104103 [erro]: MySQL Error
+2025-04-26 18:55:20.299703 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 19:03:12.317007 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 19:17:13.773053 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 19:50:25.870528 [erro]: MySQL Error
+2025-04-26 19:50:36.268361 [erro]: MySQL Error
+2025-04-26 19:51:45.044693 [erro]: MySQL Error
+2025-04-26 19:51:52.414253 [erro]: MySQL Error
+2025-04-26 20:02:39.817479 [erro]: MySQL Error
+2025-04-26 20:02:50.457832 [erro]: MySQL Error
+2025-04-26 20:46:54.786254 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 20:47:10.937330 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 20:52:07.933074 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 20:52:16.774447 [erro]: SELECT error:Unknown column 'passwd' in 'field list'
+
+2025-04-26 20:56:07.798036 [info]: timer tick
+2025-04-26 20:56:12.942516 [info]: timer tick
+2025-04-26 20:56:17.942998 [info]: timer tick
+2025-04-26 20:56:22.945029 [info]: timer tick
+2025-04-26 20:56:27.945817 [info]: timer tick
+2025-04-26 20:56:30.604584 [info]: deal with the client(127.0.0.1)
+2025-04-26 20:56:30.605729 [info]: adjust timer once
+2025-04-26 20:56:30.606175 [info]: GET / HTTP/1.1
+2025-04-26 20:56:30.636158 [info]: Host: localhost:9006
+2025-04-26 20:56:30.636352 [info]: Connection: keep-alive
+2025-04-26 20:56:30.636493 [info]: sec-ch-ua: "Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+2025-04-26 20:56:30.636575 [info]: oop!unknow header: sec-ch-ua: "Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+2025-04-26 20:56:30.636646 [info]: sec-ch-ua-mobile: ?0
+2025-04-26 20:56:30.636711 [info]: oop!unknow header: sec-ch-ua-mobile: ?0
+2025-04-26 20:56:30.636780 [info]: sec-ch-ua-platform: "Windows"
+2025-04-26 20:56:30.636843 [info]: oop!unknow header: sec-ch-ua-platform: "Windows"
+2025-04-26 20:56:30.636911 [info]: Upgrade-Insecure-Requests: 1
+2025-04-26 20:56:30.636972 [info]: oop!unknow header: Upgrade-Insecure-Requests: 1
+2025-04-26 20:56:30.637038 [info]: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+2025-04-26 20:56:30.637099 [info]: oop!unknow header: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+2025-04-26 20:56:30.637167 [info]: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2025-04-26 20:56:30.637230 [info]: oop!unknow header: Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+2025-04-26 20:56:30.637295 [info]: Sec-Fetch-Site: none
+2025-04-26 20:56:30.637360 [info]: oop!unknow header: Sec-Fetch-Site: none
+2025-04-26 20:56:30.637424 [info]: Sec-Fetch-Mode: navigate
+2025-04-26 20:56:30.637487 [info]: oop!unknow header: Sec-Fetch-Mode: navigate
+2025-04-26 20:56:30.637552 [info]: Sec-Fetch-User: ?1
+2025-04-26 20:56:30.637616 [info]: oop!unknow header: Sec-Fetch-User: ?1
+2025-04-26 20:56:30.637681 [info]: Sec-Fetch-Dest: document
+2025-04-26 20:56:30.637744 [info]: oop!unknow header: Sec-Fetch-Dest: document
+2025-04-26 20:56:30.637811 [info]: Accept-Encoding: gzip, deflate, br, zstd
+2025-04-26 20:56:30.637875 [info]: oop!unknow header: Accept-Encoding: gzip, deflate, br, zstd
+2025-04-26 20:56:30.637988 [info]: Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+2025-04-26 20:56:30.638054 [info]: oop!unknow header: Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+2025-04-26 20:56:30.638117 [info]: 
+2025-04-26 20:56:30.638901 [info]: request:HTTP/1.1 200 OK
+
+2025-04-26 20:56:30.639330 [info]: request:HTTP/1.1 200 OK
+Content-Length:586
+
+2025-04-26 20:56:30.639884 [info]: request:HTTP/1.1 200 OK
+Content-Length:586
+Connection:keep-alive
+
+2025-04-26 20:56:30.640096 [info]: request:HTTP/1.1 200 OK
+Content-Length:586
+Connection:keep-alive
+
+
+2025-04-26 20:56:30.643674 [info]: send data to the client(127.0.0.1)
+2025-04-26 20:56:30.644530 [info]: adjust timer once
+2025-04-26 20:56:32.946736 [info]: timer tick
+2025-04-26 20:56:35.868337 [info]: deal with the client(127.0.0.1)
+2025-04-26 20:56:35.869625 [info]: adjust timer once
+2025-04-26 20:56:35.870149 [info]: GET /favicon.ico HTTP/1.1
+2025-04-26 20:56:35.871082 [info]: Host: localhost:9006
+2025-04-26 20:56:35.871274 [info]: Connection: keep-alive
+2025-04-26 20:56:35.871398 [info]: sec-ch-ua-platform: "Windows"
+2025-04-26 20:56:35.871525 [info]: oop!unknow header: sec-ch-ua-platform: "Windows"
+2025-04-26 20:56:35.871606 [info]: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+2025-04-26 20:56:35.871680 [info]: oop!unknow header: User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
+2025-04-26 20:56:35.871968 [info]: sec-ch-ua: "Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+2025-04-26 20:56:35.872067 [info]: oop!unknow header: sec-ch-ua: "Google Chrome";v="135", "Not-A.Brand";v="8", "Chromium";v="135"
+2025-04-26 20:56:35.872140 [info]: sec-ch-ua-mobile: ?0
+2025-04-26 20:56:35.872208 [info]: oop!unknow header: sec-ch-ua-mobile: ?0
+2025-04-26 20:56:35.872447 [info]: Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+2025-04-26 20:56:35.872623 [info]: oop!unknow header: Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+2025-04-26 20:56:35.872698 [info]: Sec-Fetch-Site: same-origin
+2025-04-26 20:56:35.872818 [info]: oop!unknow header: Sec-Fetch-Site: same-origin
+2025-04-26 20:56:35.872924 [info]: Sec-Fetch-Mode: no-cors
+2025-04-26 20:56:35.872989 [info]: oop!unknow header: Sec-Fetch-Mode: no-cors
+2025-04-26 20:56:35.873057 [info]: Sec-Fetch-Dest: image
+2025-04-26 20:56:35.873123 [info]: oop!unknow header: Sec-Fetch-Dest: image
+2025-04-26 20:56:35.873191 [info]: Referer: http://localhost:9006/
+2025-04-26 20:56:35.873259 [info]: oop!unknow header: Referer: http://localhost:9006/
+2025-04-26 20:56:35.873327 [info]: Accept-Encoding: gzip, deflate, br, zstd
+2025-04-26 20:56:35.873390 [info]: oop!unknow header: Accept-Encoding: gzip, deflate, br, zstd
+2025-04-26 20:56:35.873459 [info]: Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+2025-04-26 20:56:35.873525 [info]: oop!unknow header: Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+2025-04-26 20:56:35.873592 [info]: 
+2025-04-26 20:56:35.873860 [info]: request:HTTP/1.1 200 OK
+
+2025-04-26 20:56:35.874005 [info]: request:HTTP/1.1 200 OK
+Content-Length:4286
+
+2025-04-26 20:56:35.874076 [info]: request:HTTP/1.1 200 OK
+Content-Length:4286
+Connection:keep-alive
+
+2025-04-26 20:56:35.874142 [info]: request:HTTP/1.1 200 OK
+Content-Length:4286
+Connection:keep-alive
+
+
+2025-04-26 20:56:35.878128 [info]: send data to the client(127.0.0.1)
+2025-04-26 20:56:35.878686 [info]: adjust timer once
+2025-04-26 20:56:37.947264 [info]: timer tick
+2025-04-26 20:56:42.948197 [info]: timer tick
+2025-04-26 20:56:47.948627 [info]: timer tick
+2025-04-26 20:56:52.949011 [info]: timer tick
+2025-04-26 20:56:57.949165 [info]: timer tick
+2025-04-26 20:57:02.949386 [info]: timer tick
+2025-04-26 20:57:07.949533 [info]: timer tick
+2025-04-26 20:57:12.949605 [info]: timer tick
+2025-04-26 20:57:17.949738 [info]: timer tick
+2025-04-26 20:57:22.949883 [info]: timer tick
+2025-04-26 20:57:27.950036 [info]: timer tick

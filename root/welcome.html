@@ -1,27 +1,206 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>WebServer</title>
-    </head>
-    <body>
-    <br/>
-    <br/>
-    <div align="center"><font size="5"> <strong>是时候做出选择了</strong></font></div>
-	<br/>
-		<br/>
-		<form action="5" method="post">
- 			<div align="center"><button type="submit">xxx.jpg</button></div>
-                </form>
-		<br/>
-                <form action="6" method="post">
-                        <div align="center"><button type="submit" >xxx.avi</button></div>
-                </form>
-		<br/>
-		<form action="7" method="post">
- 			<div align="center"><button type="submit">关注我</button></div>
-                </form>
-		
-        </div>
-    </body>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <title>欢迎</title>
+     <link rel="icon" href="images/favicon.ico">
+     <!-- Google Fonts -->
+     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+     <!-- Kaushan Script 字体用于欢迎文字 -->
+     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="css/animate.css">
+     <link rel="stylesheet" href="css/magnific-popup.css">
+     <link rel="stylesheet" href="css/font-awesome.min.css">
+     <!-- Main css -->
+     <link rel="stylesheet" href="css/style.css">
+     <style>
+          /* 全局基础样式 */
+          body {
+               font-family: 'Roboto', sans-serif;
+               background-color: #f5fbf9;
+               color: #333;
+               margin: 0;
+               padding: 0;
+          }
+          /* 预加载效果 */
+          .preloader {
+               position: fixed;
+               left: 0;
+               top: 0;
+               width: 100%;
+               height: 100%;
+               background: #f5fbf9;
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               z-index: 9999;
+          }
+          /* 导航栏样式及居中 */
+          .navbar {
+               background-color: rgba(255, 255, 255, 0.95);
+               border: none;
+               box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+          }
+          .navbar .navbar-nav {
+               float: none;
+               margin: 0 auto;
+               display: table;
+          }
+          .navbar .navbar-nav > li {
+               display: inline-block;
+               float: none;
+               margin: 0 15px;
+          }
+          .navbar .navbar-nav > li > a {
+               font-size: 16px;
+               font-weight: 700;
+               color: #555 !important;
+               transition: color 0.3s;
+          }
+          .navbar .navbar-nav > li > a:hover {
+               color: #28a745;
+          }
+          /* HOME SECTION 样式 */
+          #home {
+               padding-top: 100px;
+               padding-bottom: 60px;
+          }
+          /* 欢迎文字（打字机效果） */
+          #home h1 {
+               font-family: 'Kaushan Script', cursive;
+               font-size: 48px;
+               text-align: center;
+               color: #333;
+               overflow: hidden; /* 隐藏超出区域 */
+               white-space: nowrap;
+               border-right: 2px solid rgba(0,0,0,0.75);
+               display: inline-block;
+               /* 固定宽度，单位 ch 表示相对于字符宽度 */
+               width: 0;
+               /* 设置动画为 0.8s，分成 9 步（假设文字 9 个字符） */
+               animation: typing 0.8s steps(9) forwards, blinkCaret 0.8s step-end infinite;
+          }
+          @keyframes typing {
+               from { width: 0; }
+               to { width: 9ch; }
+          }
+          @keyframes blinkCaret {
+               50% { border-color: transparent; }
+          }
+          /* 移除图片区域（若有） */
+          .home-image { display: none; }
+          /* 新增：去除 pre 默认背景及边框，并添加动画 */
+          #asciiArt {
+               background: transparent;
+               border: none;
+               padding: 0;
+               margin: 20px auto 0;
+               animation: waving 2s infinite ease-in-out;
+          }
+          @keyframes waving {
+               0% { transform: translateY(0); }
+               50% { transform: translateY(-5px); }
+               100% { transform: translateY(0); }
+          }
+     </style>
+</head>
+
+<body data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+     <!-- PRE LOADER -->
+     <div class="preloader">
+          <div class="spinner">
+               <span class="spinner-rotate"></span>
+          </div>
+     </div>
+
+     <!-- NAVIGATION SECTION -->
+     <div class="navbar custom-navbar navbar-fixed-top" role="navigation">
+          <div class="container">
+               <div class="navbar-header">
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                    </button>
+               </div>
+               <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                         <li><a class="smoothScroll" href="/">首页</a></li>
+                         <li><a class="smoothScroll" href="/picture">图片</a></li>
+                         <li><a class="smoothScroll" href="/video">视频</a></li>
+                         <li><a class="smoothScroll" href="/login">登录</a></li>
+                         <li><a class="smoothScroll" href="/register">注册</a></li>
+                    </ul>
+               </div>
+          </div>
+     </div>
+
+     <!-- HOME SECTION -->
+     <section id="home">
+          <div class="container">
+               <div class="row">
+                    <!-- 欢迎文字，位于中间 -->
+                    <div class="col-md-12 col-sm-12" style="text-align: center;">
+                         <h1 class="wow fadeInUp" data-wow-delay="0.6s">Welcome!</h1>
+                    </div>
+               </div>
+               <div class="row">
+                    <div class="col-md-12" style="text-align: center; margin-top: 20px;">
+                         <pre id="asciiArt" style="display: none; font-family: monospace; font-size: 6px; line-height: 1; white-space: pre;">                                                                                                     
+                              ....                       *@@#***#%@=    .+@@@%.                        
+                           +@=    :*@@=                +@#*********%@@%-      %*                       
+                          @-           #@.      ..::::@%+***********%%         @-                      
+                         +%                #@@=.     @#**************@.        :@                      
+                         @                          #@********%@@@**+@=         .                      
+                         @                          @#*******%#**#@@@##%#=.:%@@@@@@=                   
+                         @.                         @********%%**%@******+%@*******#@=                 
+                         +*                         @#+********#%@+********%#+*******@=                
+                         .@@*                        @#**********@********+%@@@#*****#@                
+                         *@                           #@%#***#%@:#@******+%@++#@+****#@                
+                        @=                               .--:.    .#@@%%@@#%@@@%*****@+                
+                       @=                                               ************@#                 
+                      %*                                               .@********+#@=                  
+                     .@                                                 .@%#*+*#@@-.                   
+                     @:                                                    :=-.    -@                  
+                    .@                                                              @:                 
+                    -@                                                              @+                 
+                    -@                                                          @@@@@@@@@@#-           
+                  .-*@=-.           @@@                             #@@             #+                 
+              #@=.   @             %@@@@                           %@@@@            @-                 
+                     #=            %@@@@                           #@@@@         -:-@.                 
+                      @.:==        .@@@-          .@..:@            @@@=           @-=%@%              
+                   :@@#@                          .@=.*%                          ##                   
+                                                                             +#. @+                    
+                         #@*@@-                                                .@@@#                   
+                       =@%.@@                                                 @-    =@=                
+                     @@.     -@@-                                                                      
+                                 :@@@#:                             +@@@=                              
+                                        .-*@@@@@@@@@@@@@@@@@@@@%+:                                     
+                                                                                                                                                                                             
+</pre>
+                    </div>
+               </div>
+          </div>
+     </section>
+
+     <!-- SCRIPTS -->
+     <script src="js/jquery.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+     <script src="js/smoothscroll.js"></script>
+     <script src="js/jquery.magnific-popup.min.js"></script>
+     <script src="js/magnific-popup-options.js"></script>
+     <script src="js/wow.min.js"></script>
+     <script src="js/custom.js"></script>
+     <script>
+          $(document).ready(function(){
+               // 稍作延时，等待欢迎文字动画完成
+               setTimeout(function(){
+                    $("#asciiArt").fadeIn("slow");
+               }, 1500);
+          });
+     </script>
+</body>
+
 </html>

@@ -38,17 +38,18 @@ threadpool<T>::threadpool( int actor_model, connection_pool *connPool, int threa
 {
     if (thread_number <= 0 || max_requests <= 0)
         throw std::exception();
-    m_threads = new pthread_t[m_thread_number];
+    m_threads = new pthread_t[m_thread_number]; //分配线程数组内存用于保存线程ID
     if (!m_threads)
         throw std::exception();
-    for (int i = 0; i < thread_number; ++i)
+    for (int i = 0; i < thread_number; ++i) //创建线程
     {
-        if (pthread_create(m_threads + i, NULL, worker, this) != 0)
+        if (pthread_create(m_threads + i, NULL, worker, this) != 0) //将线程ID存到m_threads + i
         {
+            //创建失败释放内存
             delete[] m_threads;
             throw std::exception();
         }
-        if (pthread_detach(m_threads[i]))
+        if (pthread_detach(m_threads[i])) //分离线程
         {
             delete[] m_threads;
             throw std::exception();
@@ -108,25 +109,26 @@ void threadpool<T>::run()
             m_queuelocker.unlock();
             continue;
         }
-        T *request = m_workqueue.front();
-        m_workqueue.pop_front();
+        T *request = m_workqueue.front();//取出一个任务
+        m_workqueue.pop_front(); 
         m_queuelocker.unlock();
         if (!request)
             continue;
+        //Reactor模式
         if (1 == m_actor_model)
         {
-            if (0 == request->m_state)
+            if (0 == request->m_state) //读事件
             {
-                if (request->read_once())
+                if (request->read_once()) //读取数据成功
                 {
-                    request->improv = 1;
-                    connectionRAII mysqlcon(&request->mysql, m_connPool);
-                    request->process();
+                    request->improv = 1; 
+                    connectionRAII mysqlcon(&request->mysql, m_connPool);//获取并管理数据库连接
+                    request->process(); //处理HTTP请求
                 }
-                else
+                else //读取失败
                 {
                     request->improv = 1;
-                    request->timer_flag = 1;
+                    request->timer_flag = 1; //关闭连接
                 }
             }
             else
@@ -142,6 +144,7 @@ void threadpool<T>::run()
                 }
             }
         }
+        //Proactor模式
         else
         {
             connectionRAII mysqlcon(&request->mysql, m_connPool);

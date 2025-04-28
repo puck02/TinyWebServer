@@ -1,17 +1,182 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>awsl</title>
-    </head>
-    <body><br/>
-<br/>
-<div align="center"><font size="5"> <strong>你居然想看视频，不想关注我</strong></font></div>
-<br/>
+<html lang="en">
 
-<br/>
-<br/>
-<div align="center"><video width="906" height="506" controls>
-    <source src="xxx.mp4" type="video/mp4">
-</video></div>
+<head>
+     <meta charset="UTF-8">
+     <title>视频</title>
+     <link rel="icon" href="images/favicon.ico">
+     <!-- Google Fonts -->
+     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="css/animate.css">
+     <link rel="stylesheet" href="css/magnific-popup.css">
+     <link rel="stylesheet" href="css/font-awesome.min.css">
+     <!-- Main css -->
+     <link rel="stylesheet" href="css/style.css">
+     <style>
+         /* 全局基础样式 */
+         body {
+              font-family: 'Roboto', sans-serif;
+              background-color: #f5fbf9;
+              color: #333;
+              margin-top: 0;
+              padding-top: 80px; /* 增加内边距，避免固定导航栏遮挡内容 */
+         }
+         
+         /* 预加载效果 */
+         .preloader {
+              position: fixed;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              background: #f5fbf9;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 9999;
+         }
+         
+         /* 导航栏美化及按钮居中 */
+         .navbar {
+              background-color: rgba(255, 255, 255, 0.95);
+              border: none;
+              box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+         }
+         
+         .navbar .navbar-nav {
+              float: none;
+              margin: 0 auto;
+              display: table;
+         }
+         
+         .navbar .navbar-nav > li {
+              display: inline-block;
+              float: none;
+              margin: 0 15px;
+         }
+         
+         .navbar .navbar-nav > li > a {
+              font-size: 16px;
+              font-weight: 700;
+              color: #555 !important;
+              transition: color 0.3s;
+         }
+         
+         .navbar .navbar-nav > li > a:hover {
+              color: #28a745; /* 悬停时绿色高亮 */
+         }
+         
+         /* 视频播放器样式 */
+         .video-container {
+              text-align: center;
+              margin-top: 20px;
+         }
+         
+         .video-container video {
+              max-width: 100%;
+              height: auto;
+              border-radius: 5px;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+              transition: transform 0.3s;
+         }
+         
+         .video-container video:hover {
+              transform: scale(1.02);
+         }
+         
+         /* 移除 HOME SECTION 内的头像和标题，避免顶部多余留白 */
+         #home {
+              padding-top: 0;
+              padding-bottom: 40px;
+         }
+     </style>
+</head>
+
+<body data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+     <!-- PRE LOADER -->
+     <div class="preloader">
+          <div class="spinner">
+               <span class="spinner-rotate"></span>
+          </div>
+     </div>
+     
+     <!-- NAVIGATION SECTION -->
+     <div class="navbar custom-navbar navbar-fixed-top" role="navigation">
+          <div class="container">
+               <div class="navbar-header">
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                    </button>
+               </div>
+               <div class="collapse navbar-collapse">
+                    <!-- 移除 navbar-right，实现居中 -->
+                    <ul class="nav navbar-nav">
+                         <li><a class="smoothScroll" href="/">首页</a></li>
+                         <li><a class="smoothScroll" href="/picture">图片</a></li>
+                         <li><a class="smoothScroll" href="/video">视频</a></li>
+                         <li><a class="smoothScroll" href="/login">登录</a></li>
+                         <li><a class="smoothScroll" href="/register">注册</a></li>
+                         <li>
+                             <a href="#" id="uploadVideoBtn">上传</a>
+                             <form id="uploadVideoForm" style="display:none;" enctype="multipart/form-data">
+                                 <input type="file" name="video" accept=".mp4" style="display:none;" id="videoInput">
+                             </form>
+                         </li>
+                    </ul>
+               </div>
+          </div>
+     </div>
+     
+     <!-- HOME SECTION（移除头像和标题，只保留视频播放器） -->
+     <section id="home">
+          <div class="container">
+               <div class="row">
+                    <div class="video-container">
+                         <video width="906" height="506" controls>
+                              <source src="/video/xxx.mp4" type="video/mp4">
+                         </video>
+                    </div>
+               </div>
+          </div>
+     </section>
+     
+     <!-- SCRIPTS -->
+     <script src="js/jquery.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+     <script src="js/smoothscroll.js"></script>
+     <script src="js/jquery.magnific-popup.min.js"></script>
+     <script src="js/magnific-popup-options.js"></script>
+     <script src="js/wow.min.js"></script>
+     <script src="js/custom.js"></script>
+     <script>
+         // 隐藏预加载
+         $(window).on('load', function () {
+              $('.preloader').fadeOut('slow');
+         });
+
+         // 上传视频
+         document.getElementById('uploadVideoBtn').onclick = function(e) {
+              e.preventDefault();
+              document.getElementById('videoInput').click();
+         };
+         document.getElementById('videoInput').onchange = function() {
+              var formData = new FormData(document.getElementById('uploadVideoForm'));
+              fetch('/upload_video', {
+                   method: 'POST',
+                   body: formData,
+                   credentials: 'include'
+              }).then(res => res.json()).then(data => {
+                   if(data.success) {
+                        location.reload();
+                   } else {
+                        alert(data.msg || "上传失败");
+                   }
+              });
+         };
+     </script>
+</body>
+
 </html>

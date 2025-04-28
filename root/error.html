@@ -1,0 +1,135 @@
+<!--
+ * @Author       : Puck
+ * @Date         : 2020-06-30
+ * @copyleft GPL 2.0
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <title>error</title>
+     <link rel="icon" href="images/favicon.ico">
+
+     <!-- 引入 Kaushan Script 手写体 -->
+     <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+
+     <!-- 样式 -->
+     <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="css/animate.css">
+     <link rel="stylesheet" href="css/magnific-popup.css">
+     <link rel="stylesheet" href="css/font-awesome.min.css">
+     <link rel="stylesheet" href="css/style.css">
+
+     <style>
+          /* 隐藏导航栏（保留 DOM，防止脚本报错） */
+          .navbar { display: none; }
+
+          /* 使导航条居中显示 */
+          .navbar .navbar-right {
+               float: none;
+               margin: 0 auto;
+               display: flex;
+               justify-content: center;
+          }
+
+          /* Home 区域：上移并水平居中 */
+          #home .container {
+               display: flex;
+               flex-direction: column;
+               align-items: center;
+               justify-content: flex-start;
+               padding-top: 15vh;   /* 距离顶部 15% 视口高度 */
+               min-height: 100vh;
+          }
+
+          /* 打字文字样式：大号手写体 */
+          #typewriter {
+               font-family: 'Kaushan Script', cursive;
+               font-weight: 700;       /* 模拟加粗 */
+               font-size: 3.5rem;      /* 放大字体 */
+               color: #1d2939;
+               margin: 0;
+          }
+     </style>
+</head>
+
+<body data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+
+     <!-- PRE LOADER -->
+     <div class="preloader">
+          <div class="spinner">
+               <span class="spinner-rotate"></span>
+          </div>
+     </div>
+
+     <!-- 隐藏的 NAVIGATION SECTION -->
+     <div class="navbar custom-navbar navbar-fixed-top" role="navigation">
+          <div class="container">
+               <div class="navbar-header">
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                    </button>
+               </div>
+               <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                         <li><a class="smoothScroll" href="/">首页</a></li>
+                         <li><a class="smoothScroll" href="/picture">图片</a></li>
+                         <li><a class="smoothScroll" href="/video">视频</a></li>
+                         <li><a class="smoothScroll" href="/login">登录</a></li>
+                         <li><a class="smoothScroll" href="/register">注册</a></li>
+                    </ul>
+               </div>
+          </div>
+     </div>
+
+     <!-- HOME SECTION -->
+     <section id="home">
+          <div class="container">
+               <div class="row">
+                    <div class="col-xs-12 text-center">
+                         <!-- 打字机效果容器 -->
+                         <h1 id="typewriter" class="wow fadeInUp" data-wow-delay="0.6s"></h1>
+                    </div>
+               </div>
+          </div>
+     </section>
+
+     <!-- 脚本引用 -->
+     <script src="js/jquery.js"></script>
+     <script src="js/bootstrap.min.js"></script>
+     <script src="js/smoothscroll.js"></script>
+     <script src="js/jquery.magnific-popup.min.js"></script>
+     <script src="js/magnific-popup-options.js"></script>
+     <script src="js/wow.min.js"></script>
+     <script src="js/custom.js"></script>
+
+     <!-- 打字机效果 & 自动跳转 -->
+     <script>
+          document.addEventListener('DOMContentLoaded', function () {
+               var str = "Oops! That username/password combo didn’t pass muster!";
+               var el = document.getElementById('typewriter');
+               var total = 1800;                // 总时长 1.8 秒
+               var delay = total / str.length;  // 每字符间隔
+               var idx = 0;
+
+               function typeChar() {
+                    if (idx < str.length) {
+                         el.textContent += str.charAt(idx++);
+                         setTimeout(typeChar, delay);
+                    } else {
+                         // 打印完成后 2 秒自动跳回登录页
+                         setTimeout(function(){
+                             window.location.href = "/login";
+                         }, 2000);
+                    }
+               }
+               // 延迟 0.5 秒后开始打字
+               setTimeout(typeChar, 500);
+          });
+     </script>
+</body>
+
+</html>

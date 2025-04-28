@@ -253,10 +253,12 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
     else if (strcasecmp(method, "POST") == 0)
     {
         m_method = POST;
-        cgi = 1;
+        cgi = 1; // Enable CGI flag for POST requests
     }
     else
         return BAD_REQUEST;
+
+    // Skip leading spaces in URL
     m_url += strspn(m_url, " \t");
     m_version = strpbrk(m_url, " \t");
     if (!m_version)
@@ -265,13 +267,14 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
     m_version += strspn(m_version, " \t");
     if (strcasecmp(m_version, "HTTP/1.1") != 0)
         return BAD_REQUEST;
+
+    // Handle "http://" and "https://" prefixes
     if (strncasecmp(m_url, "http://", 7) == 0)
     {
         m_url += 7;
         m_url = strchr(m_url, '/');
     }
-
-    if (strncasecmp(m_url, "https://", 8) == 0)
+    else if (strncasecmp(m_url, "https://", 8) == 0)
     {
         m_url += 8;
         m_url = strchr(m_url, '/');
@@ -279,9 +282,23 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
 
     if (!m_url || m_url[0] != '/')
         return BAD_REQUEST;
-    //当url为/时，显示判断界面
-    if (strlen(m_url) == 1)
-        strcat(m_url, "judge.html");
+
+    // When url is "/", serve index.html
+    // Check if the URL is exactly "/"
+    if (strcmp(m_url, "/") == 0) {
+        // Overwrite "/" with "/index.html"
+        // Ensure buffer has space. Assuming m_url points within m_read_buf.
+        // Need space for "/index.html" + null terminator (12 chars)
+        // Calculate remaining space from m_url's position
+        size_t remaining_space = READ_BUFFER_SIZE - (m_url - m_read_buf);
+        if (remaining_space > strlen("index.html")) { // Need space for "index.html" after the '/'
+             strcpy(m_url + 1, "index.html"); // Overwrite starting from the character after '/'
+        } else {
+             LOG_ERROR("Buffer overflow prevented in parse_request_line for /index.html");
+             return BAD_REQUEST; // Not enough space in buffer
+        }
+    }
+
     m_check_state = CHECK_STATE_HEADER;
     return NO_REQUEST;
 }
@@ -387,132 +404,198 @@ http_conn::HTTP_CODE http_conn::process_read()
 
 http_conn::HTTP_CODE http_conn::do_request()
 {
+    // Copy the document root to the beginning of m_real_file
     strcpy(m_real_file, doc_root);
     int len = strlen(doc_root);
-    //printf("m_url:%s\n", m_url);
-    const char *p = strrchr(m_url, '/');
+    const char *p = strrchr(m_url, '/'); // Find the last '/' in the URL
 
-    //处理cgi
-    if (cgi == 1 && (*(p + 1) == '2' || *(p + 1) == '3'))
+    // 自动补全静态页面的.html后缀
+    if (strcmp(m_url, "/login") == 0)
+        strcpy(m_url, "/login.html");
+    else if (strcmp(m_url, "/register") == 0)
+        strcpy(m_url, "/register.html");
+    else if (strcmp(m_url, "/picture") == 0)
+        strcpy(m_url, "/picture.html");
+    else if (strcmp(m_url, "/video") == 0)
+        strcpy(m_url, "/video.html");
+
+    // Handle CGI requests (login/registration) based on POST method and URL pattern
+    // Assumes URLs like /2... for login and /3... for registration trigger CGI
+    // Check if p is not NULL before dereferencing p+1
+    if (cgi == 1 && p && p[1] != '\0' && (p[1] == '2' || p[1] == '3'))
     {
-
-        //根据标志判断是登录检测还是注册检测
-        char flag = m_url[1];
-
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/");
-        strcat(m_url_real, m_url + 2);
-        strncpy(m_real_file + len, m_url_real, FILENAME_LEN - len - 1);
-        free(m_url_real);
-
-        //将用户名和密码提取出来
-        //user=123&passwd=123
+        // Extract username and password from m_string (POST body: "user=...")
         char name[100], password[100];
-        int i;
-        for (i = 5; m_string[i] != '&'; ++i)
-            name[i - 5] = m_string[i];
-        name[i - 5] = '\0';
+        int name_len = 0;
+        int pw_len = 0;
+        // Simplified parsing, assuming "user=...&passwd=..." format
+        char* user_start = strstr(m_string, "user=");
+        if (user_start) {
+            user_start += 5; // Move past "user="
+            char* user_end = strchr(user_start, '&');
+            if (user_end) {
+                name_len = user_end - user_start;
+                if (name_len >= 100) name_len = 99; // Prevent overflow
+                strncpy(name, user_start, name_len);
+                name[name_len] = '\0';
 
-        int j = 0;
-        for (i = i + 10; m_string[i] != '\0'; ++i, ++j)
-            password[j] = m_string[i];
-        password[j] = '\0';
+                char* pw_start = strstr(user_end, "passwd=");
+                if (pw_start) {
+                    pw_start += 7; // Move past "passwd="
+                    // Find end of password (end of string)
+                    char* pw_end = pw_start + strlen(pw_start);
+                    pw_len = pw_end - pw_start;
+                    if (pw_len >= 100) pw_len = 99; // Prevent overflow
+                    strncpy(password, pw_start, pw_len);
+                    password[pw_len] = '\0';
+                } else { password[0] = '\0'; } // Password not found
+            } else { name[0] = '\0'; password[0] = '\0'; } // Malformed body
+        } else { name[0] = '\0'; password[0] = '\0'; } // Malformed body
 
-        if (*(p + 1) == '3')
+
+        // Registration (/3...)
+        if (p[1] == '3')
         {
-            //如果是注册，先检测数据库中是否有重名的
-            //没有重名的，进行增加数据
-            char *sql_insert = (char *)malloc(sizeof(char) * 200);
-            strcpy(sql_insert, "INSERT INTO user(username, passwd) VALUES(");
-            strcat(sql_insert, "'");
-            strcat(sql_insert, name);
-            strcat(sql_insert, "', '");
-            strcat(sql_insert, password);
-            strcat(sql_insert, "')");
+            // NOTE: This SQL construction is vulnerable to SQL Injection.
+            // Use prepared statements for production code.
+            char sql_insert[256];
+            snprintf(sql_insert, sizeof(sql_insert), "INSERT INTO user(username, passwd) VALUES('%s', '%s')", name, password);
 
             if (users.find(name) == users.end())
             {
                 m_lock.lock();
+                // Assuming 'mysql' is a member variable representing the connection
                 int res = mysql_query(mysql, sql_insert);
-                users.insert(pair<string, string>(name, password));
-                m_lock.unlock();
-
-                if (!res)
-                    strcpy(m_url, "/log.html");
-                else
-                    strcpy(m_url, "/registerError.html");
+                if (!res) // SQL query succeeded
+                {
+                    users.insert(std::make_pair(name, password));
+                    m_lock.unlock();
+                    // Redirect to login page after successful registration
+                    strcpy(m_url, "/login.html");
+                }
+                else // SQL query failed
+                {
+                    m_lock.unlock();
+                    LOG_ERROR("INSERT error: %s", mysql_error(mysql));
+                    // Redirect to registration error page (assuming registerError.html exists)
+                    // If not, maybe redirect back to register.html or a generic error page
+                    strcpy(m_url, "/register.html"); // Or "/error.html" or "/registerError.html"
+                }
+            }
+            else // User already exists
+            {
+                 // Redirect to registration error page or back to registration
+                 strcpy(m_url, "/register.html"); // Or "/error.html" or "/registerError.html"
+            }
+        }
+        // Login (/2...)
+        else // if (p[1] == '2')
+        {
+            if (users.count(name) && users[name] == password)
+            {
+                // Login successful, redirect to welcome page
+                strcpy(m_url, "/welcome.html");
             }
             else
-                strcpy(m_url, "/registerError.html");
+            {
+                // Login failed, redirect back to login page
+                strcpy(m_url, "/login.html"); // Or "/loginError.html" if it exists
+            }
         }
-        //如果是登录，直接判断
-        //若浏览器端输入的用户名和密码在表中可以查找到，返回1，否则返回0
-        else if (*(p + 1) == '2')
-        {
-            if (users.find(name) != users.end() && users[name] == password)
-                strcpy(m_url, "/welcome.html");
-            else
-                strcpy(m_url, "/logError.html");
-        }
-    }
-
-    if (*(p + 1) == '0')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/register.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '1')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/log.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '5')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/picture.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '6')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/video.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else if (*(p + 1) == '7')
-    {
-        char *m_url_real = (char *)malloc(sizeof(char) * 200);
-        strcpy(m_url_real, "/fans.html");
-        strncpy(m_real_file + len, m_url_real, strlen(m_url_real));
-
-        free(m_url_real);
-    }
-    else
+        // After CGI logic, m_url might have changed (e.g., to /welcome.html).
+        // Construct the final file path based on the potentially updated m_url.
         strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
+        m_real_file[FILENAME_LEN - 1] = '\0'; // Ensure null termination
+    }
+    // General file request (GET, or POST not matching CGI pattern /2 or /3)
+    else
+    {
+        // Append the requested URL path to the document root path
+        // Example: doc_root="/path/to/root", m_url="/css/style.css" -> m_real_file="/path/to/root/css/style.css"
+        strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
+        m_real_file[FILENAME_LEN - 1] = '\0'; // Ensure null termination
+    }
 
+    // --- File checking and mapping logic remains the same ---
     if (stat(m_real_file, &m_file_stat) < 0)
-        return NO_RESOURCE;
+    {
+        LOG_ERROR("File not found or inaccessible: %s", m_real_file);
+        // Check if the original request was for a specific error page that doesn't exist
+        // Avoid infinite loops if error pages themselves are missing
+        if (strcmp(m_url, "/404.html") != 0) { // Prevent loop if 404 itself is missing
+            strcpy(m_url, "/404.html"); // Try to serve the 404 page
+            // Reconstruct path for 404.html
+            strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
+            m_real_file[FILENAME_LEN - 1] = '\0';
+            // Stat again for 404.html
+            if (stat(m_real_file, &m_file_stat) < 0) {
+                 return NO_RESOURCE; // 404 page also missing, return code
+            }
+            // Fall through to check permissions etc. for 404.html
+        } else {
+            return NO_RESOURCE; // Already tried 404, give up
+        }
+        // If we found 404.html, continue to permission checks etc. below
+    }
 
-    if (!(m_file_stat.st_mode & S_IROTH))
-        return FORBIDDEN_REQUEST;
 
-    if (S_ISDIR(m_file_stat.st_mode))
-        return BAD_REQUEST;
+    if (!(m_file_stat.st_mode & S_IROTH)) // Check if file has 'other' read permission
+    {
+        LOG_ERROR("Forbidden access to file: %s", m_real_file);
+         // Similar logic for 403
+        if (strcmp(m_url, "/403.html") != 0) {
+            strcpy(m_url, "/403.html");
+            strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
+            m_real_file[FILENAME_LEN - 1] = '\0';
+            if (stat(m_real_file, &m_file_stat) < 0) {
+                 return FORBIDDEN_REQUEST; // 403 page missing
+            }
+             // Fall through if 403.html exists
+        } else {
+             return FORBIDDEN_REQUEST; // Already tried 403
+        }
+    }
 
+    if (S_ISDIR(m_file_stat.st_mode)) // Check if it's a directory
+    {
+        LOG_ERROR("Directory listing forbidden: %s", m_real_file);
+        // Similar logic for 400 or 403
+        if (strcmp(m_url, "/400.html") != 0) { // Use 400 for bad request (directory)
+            strcpy(m_url, "/400.html");
+            strncpy(m_real_file + len, m_url, FILENAME_LEN - len - 1);
+            m_real_file[FILENAME_LEN - 1] = '\0';
+            if (stat(m_real_file, &m_file_stat) < 0) {
+                 return BAD_REQUEST; // 400 page missing
+            }
+             // Fall through if 400.html exists
+        } else {
+             return BAD_REQUEST; // Already tried 400
+        }
+    }
+
+    // Open and memory-map the file
     int fd = open(m_real_file, O_RDONLY);
+    if (fd < 0) {
+        LOG_ERROR("Cannot open file: %s, errno: %d", m_real_file, errno);
+        // Don't try to serve 500.html here, just return the error code
+        return INTERNAL_ERROR; // 500 Internal Server Error
+    }
+
+    // Memory map the file content
     m_file_address = (char *)mmap(0, m_file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    close(fd);
+    close(fd); // Close the file descriptor after mmap
+
+    if (m_file_address == MAP_FAILED) {
+        m_file_address = 0; // Reset pointer
+        LOG_ERROR("Mmap failed for file: %s, errno: %d", m_real_file, errno);
+        // Don't try to serve 500.html here
+        return INTERNAL_ERROR; // 500 Internal Server Error
+    }
+
+    // File is ready to be sent
     return FILE_REQUEST;
 }
+
 void http_conn::unmap()
 {
     if (m_file_address)
@@ -638,8 +721,18 @@ bool http_conn::process_write(HTTP_CODE ret)
             return false;
         break;
     }
-    case BAD_REQUEST:
+    case BAD_REQUEST: // This code is returned for directory requests or other bad requests
     {
+        // Send 400 Bad Request response
+        add_status_line(400, error_400_title);
+        add_headers(strlen(error_400_form));
+        if (!add_content(error_400_form))
+            return false;
+        break;
+    }
+    case NO_RESOURCE: // This code is returned for file not found
+    {
+        // Send 404 Not Found response
         add_status_line(404, error_404_title);
         add_headers(strlen(error_404_form));
         if (!add_content(error_404_form))
@@ -654,8 +747,10 @@ bool http_conn::process_write(HTTP_CODE ret)
             return false;
         break;
     }
-    case FILE_REQUEST:
+    case FILE_REQUEST: // This includes successfully finding regular files AND error pages like 404.html
     {
+        // The current design serves error pages (like 404.html) with 200 OK if found by do_request.
+        // We maintain that behavior here.
         add_status_line(200, ok_200_title);
         if (m_file_stat.st_size != 0)
         {
@@ -670,21 +765,30 @@ bool http_conn::process_write(HTTP_CODE ret)
         }
         else
         {
-            const char *ok_string = "<html><body></body></html>";
+            // Serve empty body for 0-byte files, but still 200 OK
+            const char *ok_string = ""; // Empty body is fine for 0-byte file
             add_headers(strlen(ok_string));
             if (!add_content(ok_string))
                 return false;
         }
+        break; // Added break statement
     }
     default:
-        return false;
+        // Handle unexpected codes by sending an internal server error
+        add_status_line(500, error_500_title);
+        add_headers(strlen(error_500_form));
+        if (!add_content(error_500_form))
+            return false;
+        // Fall through to set up m_iv for sending the error response
     }
+    // Common setup for non-FILE_REQUEST cases (or FILE_REQUEST with empty body)
     m_iv[0].iov_base = m_write_buf;
     m_iv[0].iov_len = m_write_idx;
     m_iv_count = 1;
     bytes_to_send = m_write_idx;
     return true;
 }
+
 void http_conn::process()
 {
     HTTP_CODE read_ret = process_read();

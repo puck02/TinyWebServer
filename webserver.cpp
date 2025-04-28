@@ -286,7 +286,7 @@ void WebServer::dealwithread(int sockfd)
     {
         if (timer)
         {
-            adjust_timer(timer);
+            adjust_timer(timer); //刷新超时时间
         }
 
         //若监测到读事件，将该事件放入请求队列
@@ -294,11 +294,11 @@ void WebServer::dealwithread(int sockfd)
 
         while (true)
         {
-            if (1 == users[sockfd].improv)
+            if (1 == users[sockfd].improv) //读事件处理完毕
             {
-                if (1 == users[sockfd].timer_flag)
+                if (1 == users[sockfd].timer_flag) //关闭超时连接
                 {
-                    deal_timer(timer, sockfd);
+                    deal_timer(timer, sockfd);  
                     users[sockfd].timer_flag = 0;
                 }
                 users[sockfd].improv = 0;
@@ -358,7 +358,7 @@ void WebServer::dealwithwrite(int sockfd)
     else
     {
         //proactor
-        if (users[sockfd].write())
+        if (users[sockfd].write())  //直接写
         {
             LOG_INFO("send data to the client(%s)", inet_ntoa(users[sockfd].get_address()->sin_addr));
 
@@ -381,6 +381,7 @@ void WebServer::eventLoop()
 
     while (!stop_server)
     {
+         //监听所有文件描述符，阻塞等待事件
         int number = epoll_wait(m_epollfd, events, MAX_EVENT_NUMBER, -1);
         if (number < 0 && errno != EINTR)
         {
@@ -412,11 +413,12 @@ void WebServer::eventLoop()
                 if (false == flag)
                     LOG_ERROR("%s", "dealclientdata failure");
             }
-            //处理客户连接上接收到的数据
+            //处理客户连接上接收到的数据 读事件
             else if (events[i].events & EPOLLIN)
             {
                 dealwithread(sockfd);
             }
+            //发送数据 写事件
             else if (events[i].events & EPOLLOUT)
             {
                 dealwithwrite(sockfd);
