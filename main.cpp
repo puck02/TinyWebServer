@@ -2,6 +2,7 @@
 
 int main(int argc, char *argv[])
 {
+    daemon(1, 0); //守护进程
     //需要修改的数据库信息,登录名,密码,库名
     string user = "root";
     string passwd = "040222";
